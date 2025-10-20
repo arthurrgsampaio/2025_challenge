@@ -1,26 +1,26 @@
 {
-  "name": "starsales",
+  "name": "starsales-monorepo",
   "version": "1.0.0",
   "private": true,
   "description": "StarSales - Dashboard Inteligente de Vendas | Challenge Astéria 2025",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build"
   },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.22.0",
-    "recharts": "^2.12.0",
-    "lucide-react": "^0.344.0"
-  },
+  "keywords": [
+    "dashboard",
+    "sales",
+    "analytics",
+    "oracle",
+    "react",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
   "devDependencies": {
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.1.4"
+    "concurrently": "^8.2.2"
   }
 }
-
