@@ -13,18 +13,40 @@ const fetchWithAuth = async (url, options = {}) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${url}`, {
-    ...options,
-    headers,
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || 'Erro na requisição');
+  const fullUrl = `${API_BASE_URL}${url}`;
+  console.log(`🌐 Fazendo requisição: ${options.method || 'GET'} ${fullUrl}`);
+  
+  if (options.body) {
+    console.log('📤 Dados enviados:', JSON.parse(options.body));
   }
 
-  return data;
+  try {
+    const response = await fetch(fullUrl, {
+      ...options,
+      headers,
+    });
+
+    console.log(`📥 Resposta recebida: ${response.status} ${response.statusText}`);
+
+    let data;
+    try {
+      data = await response.json();
+      console.log('📦 Dados da resposta:', data);
+    } catch (parseError) {
+      console.error('❌ Erro ao fazer parse da resposta JSON:', parseError);
+      throw new Error('Resposta inválida do servidor');
+    }
+
+    if (!response.ok) {
+      console.error('❌ Erro na requisição:', data);
+      throw new Error(data.message || `Erro ${response.status}: ${response.statusText}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('❌ Erro na requisição fetch:', error);
+    throw error;
+  }
 };
 
 // API de Autenticação
@@ -36,10 +58,10 @@ export const authAPI = {
     });
   },
 
-  login: async (email, senha) => {
+  login: async (email, password) => {
     return fetchWithAuth('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, senha }),
+      body: JSON.stringify({ email, password }),
     });
   },
 

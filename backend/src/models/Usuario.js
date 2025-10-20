@@ -1,5 +1,6 @@
 const { execute, executeAndCommit } = require('../config/database');
-const { v4: uuidv4 } = require('crypto').randomUUID ? require('crypto') : require('uuid');
+const crypto = require('crypto');
+const uuidv4 = crypto.randomUUID ? crypto.randomUUID.bind(crypto) : require('uuid').v4;
 
 class Usuario {
   /**

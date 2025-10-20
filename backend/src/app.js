@@ -23,13 +23,19 @@ const app = express();
 // Helmet - Segurança
 app.use(helmet());
 
-// CORS - Permitir apenas frontend local
+// CORS - Permitir frontend local em múltiplas portas
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+
+console.log('✅ CORS configurado para aceitar requisições de:');
+console.log('   - http://localhost:5173');
+console.log('   - http://localhost:3000');
+console.log('   - http://127.0.0.1:5173');
+console.log('   - http://127.0.0.1:3000');
 
 // Parse JSON
 app.use(express.json({ limit: '10mb' }));
@@ -37,6 +43,25 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Logging
 app.use(morgan('combined'));
+
+// Log de todas as requisições
+app.use((req, res, next) => {
+  console.log('');
+  console.log('📨 ============================================');
+  console.log('📨 NOVA REQUISIÇÃO');
+  console.log('📨 ============================================');
+  console.log('📨 Método:', req.method);
+  console.log('📨 URL:', req.originalUrl);
+  console.log('📨 Headers:', JSON.stringify(req.headers, null, 2));
+  if (req.body && Object.keys(req.body).length > 0) {
+    const bodyLog = { ...req.body };
+    if (bodyLog.password) bodyLog.password = '***';
+    console.log('📨 Body:', JSON.stringify(bodyLog, null, 2));
+  }
+  console.log('📨 ============================================');
+  console.log('');
+  next();
+});
 
 // Rate Limiting
 const limiter = rateLimit({

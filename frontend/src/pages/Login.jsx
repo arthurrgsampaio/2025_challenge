@@ -17,21 +17,33 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    console.log('🔐 Tentando fazer login...', { email })
 
     if (!email || !password) {
       setError('Por favor, preencha todos os campos')
       return
     }
 
-    const result = login(email, password)
-    
-    if (result.success) {
-      navigate('/dashboard')
-    } else {
-      setError(result.message)
+    try {
+      console.log('🚀 Enviando credenciais para o backend...')
+      const result = await login(email, password)
+      
+      console.log('✅ Resposta do login:', result)
+
+      if (result.success) {
+        console.log('✅ Login bem-sucedido! Redirecionando...')
+        navigate('/dashboard')
+      } else {
+        console.error('❌ Erro no login:', result.message)
+        setError(result.message || 'Email ou senha incorretos')
+      }
+    } catch (error) {
+      console.error('❌ Erro crítico no login:', error)
+      setError('Erro ao conectar com o servidor. Tente novamente.')
     }
   }
 

@@ -2,7 +2,14 @@
  * Middleware global de tratamento de erros
  */
 function errorHandler(err, req, res, next) {
-  console.error('❌ Erro:', err);
+  console.error('❌ ============================================');
+  console.error('❌ ERRO CAPTURADO');
+  console.error('❌ ============================================');
+  console.error('❌ Rota:', req.method, req.originalUrl);
+  console.error('❌ Tipo de erro:', err.name);
+  console.error('❌ Mensagem:', err.message);
+  console.error('❌ Stack:', err.stack);
+  console.error('❌ ============================================');
   
   // Erro de validação do Joi
   if (err.isJoi) {

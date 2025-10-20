@@ -29,9 +29,11 @@ const Register = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    console.log('📝 Iniciando cadastro...', { nome: formData.nome, email: formData.email })
 
     // Validações
     if (!formData.nome || !formData.email || !formData.password || !formData.confirmPassword) {
@@ -49,19 +51,28 @@ const Register = () => {
       return
     }
 
-    const result = register({
-      nome: formData.nome,
-      email: formData.email,
-      password: formData.password
-    })
+    try {
+      console.log('🚀 Enviando dados para o backend...')
+      const result = await register({
+        nome: formData.nome,
+        email: formData.email,
+        password: formData.password
+      })
 
-    if (result.success) {
-      setSuccess(true)
-      setTimeout(() => {
-        navigate('/login')
-      }, 2000)
-    } else {
-      setError(result.message)
+      console.log('✅ Resposta do backend:', result)
+
+      if (result.success) {
+        setSuccess(true)
+        setTimeout(() => {
+          navigate('/login')
+        }, 2000)
+      } else {
+        console.error('❌ Erro no cadastro:', result.message)
+        setError(result.message || 'Erro ao realizar cadastro')
+      }
+    } catch (error) {
+      console.error('❌ Erro crítico no cadastro:', error)
+      setError('Erro ao conectar com o servidor. Tente novamente.')
     }
   }
 
