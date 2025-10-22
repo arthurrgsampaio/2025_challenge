@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { vendasAPI, produtosAPI, clientesAPI, categoriasAPI } from '../config/api'
+import { useAuth } from './AuthContext'
 
 const VendasContext = createContext(null)
 
@@ -12,25 +13,26 @@ export const useVendas = () => {
 }
 
 export const VendasProvider = ({ children }) => {
+  const { isAuthenticated } = useAuth()
   const [vendas, setVendas] = useState([])
   const [produtos, setProdutos] = useState([])
   const [clientes, setClientes] = useState([])
   const [categorias, setCategorias] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const carregarDados = async () => {
     try {
       const [vendasRes, produtosRes, clientesRes, categoriasRes] = await Promise.all([
-        vendasAPI.listar(),
-        produtosAPI.listar(),
-        clientesAPI.listar(),
-        categoriasAPI.listar(),
+        vendasAPI.listar().catch(err => ({ success: false, error: err })),
+        produtosAPI.listar().catch(err => ({ success: false, error: err })),
+        clientesAPI.listar().catch(err => ({ success: false, error: err })),
+        categoriasAPI.listar().catch(err => ({ success: false, error: err }))
       ])
 
-      if (vendasRes.success) setVendas(vendasRes.data)
-      if (produtosRes.success) setProdutos(produtosRes.data)
-      if (clientesRes.success) setClientes(clientesRes.data)
-      if (categoriasRes.success) setCategorias(categoriasRes.data)
+      if (vendasRes.success) setVendas(vendasRes.data?.vendas || [])
+      if (produtosRes.success) setProdutos(produtosRes.data || [])
+      if (clientesRes.success) setClientes(clientesRes.data || [])
+      if (categoriasRes.success) setCategorias(categoriasRes.data || [])
     } catch (error) {
       console.error('Erro ao carregar dados:', error)
     } finally {
@@ -39,8 +41,11 @@ export const VendasProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    carregarDados()
-  }, [])
+    if (isAuthenticated) {
+      setLoading(true)
+      carregarDados()
+    }
+  }, [isAuthenticated])
 
   const adicionarVenda = async (vendaData) => {
     try {
@@ -82,7 +87,7 @@ export const VendasProvider = ({ children }) => {
     try {
       const response = await vendasAPI.listar(filtros)
       if (response.success) {
-        setVendas(response.data)
+        setVendas(response.data?.vendas || [])
       }
     } catch (error) {
       console.error('Erro ao atualizar vendas:', error)
@@ -97,6 +102,7 @@ export const VendasProvider = ({ children }) => {
     adicionarVenda,
     importarVendas,
     atualizarVendas,
+    recarregarDados: carregarDados,
     loading
   }
 

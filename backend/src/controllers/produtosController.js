@@ -3,6 +3,63 @@ const { HttpError } = require('../middlewares/errorHandler');
 
 class ProdutosController {
   /**
+   * Criar novo produto
+   * POST /api/produtos
+   */
+  static async create(req, res, next) {
+    try {
+      console.log('📦 [PRODUTOS] Criando novo produto');
+      console.log('📦 [PRODUTOS] Dados recebidos:', req.body);
+
+      const { cdProduto, nome, precoUnitario, idCategoria } = req.body;
+
+      // Validações
+      if (!cdProduto || !nome || precoUnitario === undefined || !idCategoria) {
+        throw new HttpError(400, 'Dados incompletos', [{
+          message: 'Código do produto, nome, preço unitário e categoria são obrigatórios'
+        }]);
+      }
+
+      if (precoUnitario < 0) {
+        throw new HttpError(400, 'Preço inválido', [{
+          field: 'precoUnitario',
+          message: 'Preço unitário deve ser maior ou igual a zero'
+        }]);
+      }
+
+      // Verificar se categoria existe
+      const Categoria = require('../models/Categoria');
+      const categoriaExists = await Categoria.exists(idCategoria);
+      
+      if (!categoriaExists) {
+        throw new HttpError(400, 'Categoria não encontrada', [{
+          field: 'idCategoria',
+          message: 'A categoria informada não existe'
+        }]);
+      }
+
+      console.log('💾 [PRODUTOS] Criando produto no banco...');
+      const produto = await Produto.create({
+        cdProduto,
+        nome,
+        precoUnitario: parseFloat(precoUnitario),
+        idCategoria: parseInt(idCategoria)
+      });
+
+      console.log('✅ [PRODUTOS] Produto criado:', produto);
+
+      res.status(201).json({
+        success: true,
+        message: 'Produto criado com sucesso!',
+        data: produto
+      });
+    } catch (error) {
+      console.error('❌ [PRODUTOS] Erro ao criar produto:', error);
+      next(error);
+    }
+  }
+
+  /**
    * Listar produtos
    * GET /api/produtos
    */

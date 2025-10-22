@@ -24,7 +24,7 @@ import '../styles/Dashboard.css'
 
 const Dashboard = () => {
   const { isAuthenticated, user } = useAuth()
-  const { vendas } = useVendas()
+  const { vendas, loading } = useVendas()
   const navigate = useNavigate()
   const [abaAtiva, setAbaAtiva] = useState('dashboard')
   const [filteredData, setFilteredData] = useState([])
@@ -35,10 +35,6 @@ const Dashboard = () => {
   })
 
   useEffect(() => {
-    setFilteredData(vendas)
-  }, [vendas])
-
-  useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login')
     }
@@ -46,7 +42,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     applyFilters()
-  }, [filters])
+  }, [filters, vendas])
 
   const applyFilters = () => {
     let filtered = [...vendas]
@@ -101,7 +97,7 @@ const Dashboard = () => {
   }
 
   // Calcular métricas com base nos dados filtrados
-  const totalVendasFiltrado = filteredData.reduce((sum, v) => sum + v.total, 0)
+  const totalVendasFiltrado = filteredData.reduce((sum, v) => sum + (Number(v.total) || 0), 0)
   const ticketMedioFiltrado = filteredData.length > 0 ? totalVendasFiltrado / filteredData.length : 0
   const clientesUnicosFiltrado = new Set(filteredData.map(v => v.idCliente)).size
 
@@ -110,6 +106,31 @@ const Dashboard = () => {
   }
 
   const renderConteudo = () => {
+    if (loading || (vendas.length === 0 && !loading)) {
+      return (
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '100px 20px',
+          gap: '20px'
+        }}>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            border: '5px solid #e5e7eb',
+            borderTop: '5px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <p style={{ color: '#6b7280', fontSize: '18px', fontWeight: 500 }}>
+            {loading ? 'Carregando dashboard...' : 'Buscando vendas...'}
+          </p>
+        </div>
+      )
+    }
+
     switch (abaAtiva) {
       case 'dashboard':
         return (

@@ -21,21 +21,15 @@ const Login = () => {
     e.preventDefault()
     setError('')
 
-    console.log('🔐 Tentando fazer login...', { email })
-
     if (!email || !password) {
       setError('Por favor, preencha todos os campos')
       return
     }
 
     try {
-      console.log('🚀 Enviando credenciais para o backend...')
       const result = await login(email, password)
-      
-      console.log('✅ Resposta do login:', result)
 
       if (result.success) {
-        console.log('✅ Login bem-sucedido! Redirecionando...')
         navigate('/dashboard')
       } else {
         console.error('❌ Erro no login:', result.message)

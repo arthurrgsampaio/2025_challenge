@@ -1,12 +1,8 @@
 const { execute, executeTransaction, oracledb } = require('../config/database');
 
 class Venda {
-  /**
-   * Criar nova venda com produtos
-   */
   static async create(vendaData, idUsuario) {
     return executeTransaction(async (connection) => {
-      // 1. Inserir venda
       const vendaSql = `
         INSERT INTO vendas (
           id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente,
@@ -32,7 +28,6 @@ class Venda {
       const vendaResult = await connection.execute(vendaSql, vendaBinds);
       const idVenda = vendaResult.outBinds.idVenda[0];
       
-      // 2. Inserir produtos da venda
       const produtoSql = `
         INSERT INTO venda_produtos (
           id_venda, id_produto, nome_produto, quantidade,
@@ -61,9 +56,6 @@ class Venda {
     });
   }
   
-  /**
-   * Listar vendas com filtros
-   */
   static async findAll(idUsuario, filters = {}) {
     let sql = `
       SELECT 
@@ -74,7 +66,7 @@ class Venda {
         v.idade_cliente as "idadeCliente",
         v.regiao_venda as "regiaoVenda",
         v.data_venda as "dataVenda",
-        v.total,
+        v.total as "total",
         v.created_at as "createdAt"
       FROM vendas v
       WHERE v.id_usuario = :idUsuario
@@ -82,31 +74,26 @@ class Venda {
     
     const binds = { idUsuario };
     
-    // Filtro por data início
     if (filters.dataInicio) {
       sql += ` AND v.data_venda >= :dataInicio`;
       binds.dataInicio = filters.dataInicio;
     }
     
-    // Filtro por data fim
     if (filters.dataFim) {
       sql += ` AND v.data_venda <= :dataFim`;
       binds.dataFim = filters.dataFim;
     }
     
-    // Filtro por região
     if (filters.regiao) {
       sql += ` AND v.regiao_venda = :regiao`;
       binds.regiao = filters.regiao;
     }
     
-    // Filtro por cliente
     if (filters.idCliente) {
       sql += ` AND v.id_cliente = :idCliente`;
       binds.idCliente = filters.idCliente;
     }
     
-    // Filtro por categoria (através dos produtos)
     if (filters.idCategoria) {
       sql += ` AND EXISTS (
         SELECT 1 FROM venda_produtos vp
@@ -116,7 +103,6 @@ class Venda {
       binds.idCategoria = filters.idCategoria;
     }
     
-    // Paginação
     const page = filters.page || 1;
     const limit = filters.limit || 50;
     const offset = (page - 1) * limit;
@@ -130,7 +116,6 @@ class Venda {
     const result = await execute(sql, binds);
     const vendas = result.rows;
     
-    // Buscar produtos de cada venda
     if (vendas.length > 0) {
       const vendasIds = vendas.map(v => v.idVenda);
       const produtosSql = `
@@ -138,10 +123,10 @@ class Venda {
           id_venda as "idVenda",
           id_produto as "idProduto",
           nome_produto as "nomeProduto",
-          quantidade,
+          quantidade as "quantidade",
           preco_unitario as "precoUnitario",
           id_categoria as "idCategoria",
-          subtotal
+          subtotal as "subtotal"
         FROM venda_produtos
         WHERE id_venda IN (${vendasIds.map((_, i) => `:id${i}`).join(',')})
         ORDER BY id_venda, id_produto
@@ -174,19 +159,40 @@ class Venda {
       });
     }
     
-    // Contar total de vendas
     let countSql = `
       SELECT COUNT(*) as count
       FROM vendas v
       WHERE v.id_usuario = :idUsuario
     `;
     
-    if (filters.dataInicio) countSql += ` AND v.data_venda >= :dataInicio`;
-    if (filters.dataFim) countSql += ` AND v.data_venda <= :dataFim`;
-    if (filters.regiao) countSql += ` AND v.regiao_venda = :regiao`;
-    if (filters.idCliente) countSql += ` AND v.id_cliente = :idCliente`;
+    const countBinds = { idUsuario };
     
-    const countResult = await execute(countSql, binds);
+    if (filters.dataInicio) {
+      countSql += ` AND v.data_venda >= :dataInicio`;
+      countBinds.dataInicio = filters.dataInicio;
+    }
+    if (filters.dataFim) {
+      countSql += ` AND v.data_venda <= :dataFim`;
+      countBinds.dataFim = filters.dataFim;
+    }
+    if (filters.regiao) {
+      countSql += ` AND v.regiao_venda = :regiao`;
+      countBinds.regiao = filters.regiao;
+    }
+    if (filters.idCliente) {
+      countSql += ` AND v.id_cliente = :idCliente`;
+      countBinds.idCliente = filters.idCliente;
+    }
+    if (filters.idCategoria) {
+      countSql += ` AND EXISTS (
+        SELECT 1 FROM venda_produtos vp
+        WHERE vp.id_venda = v.id_venda
+        AND vp.id_categoria = :idCategoria
+      )`;
+      countBinds.idCategoria = filters.idCategoria;
+    }
+    
+    const countResult = await execute(countSql, countBinds);
     const total = countResult.rows[0].COUNT;
     
     return {
@@ -200,9 +206,6 @@ class Venda {
     };
   }
   
-  /**
-   * Buscar venda por ID
-   */
   static async findById(idVenda, idUsuario) {
     const sql = `
       SELECT 
@@ -213,7 +216,7 @@ class Venda {
         v.idade_cliente as "idadeCliente",
         v.regiao_venda as "regiaoVenda",
         v.data_venda as "dataVenda",
-        v.total,
+        v.total as "total",
         v.created_at as "createdAt",
         v.updated_at as "updatedAt"
       FROM vendas v
@@ -229,15 +232,14 @@ class Venda {
     
     const venda = result.rows[0];
     
-    // Buscar produtos da venda
     const produtosSql = `
       SELECT 
         id_produto as "idProduto",
         nome_produto as "nomeProduto",
-        quantidade,
+        quantidade as "quantidade",
         preco_unitario as "precoUnitario",
         id_categoria as "idCategoria",
-        subtotal
+        subtotal as "subtotal"
       FROM venda_produtos
       WHERE id_venda = :idVenda
       ORDER BY id_produto
@@ -249,9 +251,6 @@ class Venda {
     return venda;
   }
   
-  /**
-   * Importar múltiplas vendas
-   */
   static async importMany(vendasData, idUsuario) {
     const vendasImportadas = [];
     const erros = [];

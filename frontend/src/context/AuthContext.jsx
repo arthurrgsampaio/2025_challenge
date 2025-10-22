@@ -40,11 +40,8 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   const register = async (userData) => {
-    console.log('🔧 AuthContext: register chamado com:', userData)
     try {
-      console.log('🔧 AuthContext: Chamando authAPI.register...')
       const response = await authAPI.register(userData)
-      console.log('✅ AuthContext: Resposta recebida:', response)
       return { success: true, message: response.message || 'Cadastro realizado com sucesso!' }
     } catch (error) {
       console.error('❌ AuthContext: Erro no register:', error)
@@ -53,20 +50,15 @@ export const AuthProvider = ({ children }) => {
   }
 
   const login = async (email, password) => {
-    console.log('🔧 AuthContext: login chamado com:', { email })
     try {
-      console.log('🔧 AuthContext: Chamando authAPI.login...')
       const response = await authAPI.login(email, password)
-      console.log('✅ AuthContext: Resposta recebida:', response)
       
       if (response.success) {
-        console.log('✅ AuthContext: Login bem-sucedido, salvando token e usuário')
         localStorage.setItem('token', response.data.token)
         setUser(response.data.user)
         return { success: true }
       }
       
-      console.warn('⚠️ AuthContext: Login falhou:', response.message)
       return { success: false, message: response.message || 'Erro ao fazer login' }
     } catch (error) {
       console.error('❌ AuthContext: Erro no login:', error)

@@ -14,11 +14,6 @@ const fetchWithAuth = async (url, options = {}) => {
   }
 
   const fullUrl = `${API_BASE_URL}${url}`;
-  console.log(`🌐 Fazendo requisição: ${options.method || 'GET'} ${fullUrl}`);
-  
-  if (options.body) {
-    console.log('📤 Dados enviados:', JSON.parse(options.body));
-  }
 
   try {
     const response = await fetch(fullUrl, {
@@ -26,12 +21,9 @@ const fetchWithAuth = async (url, options = {}) => {
       headers,
     });
 
-    console.log(`📥 Resposta recebida: ${response.status} ${response.statusText}`);
-
     let data;
     try {
       data = await response.json();
-      console.log('📦 Dados da resposta:', data);
     } catch (parseError) {
       console.error('❌ Erro ao fazer parse da resposta JSON:', parseError);
       throw new Error('Resposta inválida do servidor');
@@ -107,12 +99,26 @@ export const clientesAPI = {
   listar: async () => {
     return fetchWithAuth('/clientes');
   },
+  
+  criar: async (clienteData) => {
+    return fetchWithAuth('/clientes', {
+      method: 'POST',
+      body: JSON.stringify(clienteData),
+    });
+  },
 };
 
 // API de Produtos
 export const produtosAPI = {
   listar: async () => {
     return fetchWithAuth('/produtos');
+  },
+  
+  criar: async (produtoData) => {
+    return fetchWithAuth('/produtos', {
+      method: 'POST',
+      body: JSON.stringify(produtoData),
+    });
   },
 };
 

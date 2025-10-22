@@ -33,8 +33,6 @@ const Register = () => {
     e.preventDefault()
     setError('')
 
-    console.log('📝 Iniciando cadastro...', { nome: formData.nome, email: formData.email })
-
     // Validações
     if (!formData.nome || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Por favor, preencha todos os campos')
@@ -52,14 +50,11 @@ const Register = () => {
     }
 
     try {
-      console.log('🚀 Enviando dados para o backend...')
       const result = await register({
         nome: formData.nome,
         email: formData.email,
         password: formData.password
       })
-
-      console.log('✅ Resposta do backend:', result)
 
       if (result.success) {
         setSuccess(true)

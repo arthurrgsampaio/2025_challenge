@@ -27,10 +27,12 @@ const SalesTable = ({ vendas }) => {
   }
 
   const formatCurrency = (value) => {
-    return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    const numValue = Number(value)
+    if (isNaN(numValue) || value === null || value === undefined) {
+      return 'R$ 0,00'
+    }
+    return `R$ ${numValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   }
-
-  // Ordenar por data (mais recente primeiro)
   const sortedVendas = [...vendas].sort((a, b) => 
     new Date(b.dataVenda) - new Date(a.dataVenda)
   )

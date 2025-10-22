@@ -2,6 +2,39 @@ const { execute } = require('../config/database');
 
 class Produto {
   /**
+   * Criar novo produto
+   */
+  static async create({ cdProduto, nome, precoUnitario, idCategoria }) {
+    const sql = `
+      INSERT INTO produtos (cd_produto, nome, preco_unitario, id_categoria)
+      VALUES (:cdProduto, :nome, :precoUnitario, :idCategoria)
+      RETURNING id_produto INTO :idProduto
+    `;
+    
+    const binds = {
+      cdProduto,
+      nome,
+      precoUnitario,
+      idCategoria,
+      idProduto: { dir: require('../config/database').oracledb.BIND_OUT, type: require('../config/database').oracledb.NUMBER },
+    };
+    
+    const result = await require('../config/database').executeTransaction(async (connection) => {
+      const res = await connection.execute(sql, binds);
+      await connection.commit();
+      return res;
+    });
+    
+    return {
+      idProduto: result.outBinds.idProduto[0],
+      cdProduto,
+      nome,
+      precoUnitario,
+      idCategoria,
+    };
+  }
+
+  /**
    * Listar todos os produtos com filtros
    */
   static async findAll(filters = {}) {
@@ -9,7 +42,7 @@ class Produto {
       SELECT 
         p.id_produto as "idProduto",
         p.cd_produto as "cdProduto",
-        p.nome,
+        p.nome as "nome",
         p.preco_unitario as "precoUnitario",
         p.id_categoria as "idCategoria",
         c.nome_categoria as "nomeCategoria",
@@ -65,7 +98,7 @@ class Produto {
       SELECT 
         p.id_produto as "idProduto",
         p.cd_produto as "cdProduto",
-        p.nome,
+        p.nome as "nome",
         p.preco_unitario as "precoUnitario",
         p.id_categoria as "idCategoria",
         c.nome_categoria as "nomeCategoria",
@@ -137,7 +170,7 @@ class Produto {
       SELECT 
         id_produto as "idProduto",
         cd_produto as "cdProduto",
-        nome,
+        nome as "nome",
         preco_unitario as "precoUnitario",
         id_categoria as "idCategoria"
       FROM produtos

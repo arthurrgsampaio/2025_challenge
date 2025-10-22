@@ -2,15 +2,46 @@ const { execute } = require('../config/database');
 
 class Cliente {
   /**
+   * Criar novo cliente
+   */
+  static async create({ nome, sexo, idade }) {
+    const sql = `
+      INSERT INTO clientes (nome, sexo, idade)
+      VALUES (:nome, :sexo, :idade)
+      RETURNING id_cliente INTO :idCliente
+    `;
+    
+    const binds = {
+      nome,
+      sexo: sexo.toUpperCase(),
+      idade,
+      idCliente: { dir: require('../config/database').oracledb.BIND_OUT, type: require('../config/database').oracledb.NUMBER },
+    };
+    
+    const result = await require('../config/database').executeTransaction(async (connection) => {
+      const res = await connection.execute(sql, binds);
+      await connection.commit();
+      return res;
+    });
+    
+    return {
+      idCliente: result.outBinds.idCliente[0],
+      nome,
+      sexo: sexo.toUpperCase(),
+      idade,
+    };
+  }
+
+  /**
    * Listar todos os clientes com filtros
    */
   static async findAll(filters = {}) {
     let sql = `
       SELECT 
         c.id_cliente as "idCliente",
-        c.nome,
-        c.sexo,
-        c.idade,
+        c.nome as "nome",
+        c.sexo as "sexo",
+        c.idade as "idade",
         COUNT(v.id_venda) as "numeroVendas",
         NVL(SUM(v.total), 0) as "totalCompras"
       FROM clientes c
@@ -60,9 +91,9 @@ class Cliente {
     const sql = `
       SELECT 
         c.id_cliente as "idCliente",
-        c.nome,
-        c.sexo,
-        c.idade,
+        c.nome as "nome",
+        c.sexo as "sexo",
+        c.idade as "idade",
         COUNT(v.id_venda) as "numeroVendas",
         NVL(SUM(v.total), 0) as "totalCompras",
         NVL(AVG(v.total), 0) as "ticketMedio",

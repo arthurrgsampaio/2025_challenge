@@ -1,16 +1,56 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useVendas } from '../context/VendasContext'
 import { Download, Upload, AlertCircle, CheckCircle, FileText } from 'lucide-react'
 import '../styles/ImportCSV.css'
 
 const ImportCSV = () => {
-  const { importarVendas, produtos, clientes } = useVendas()
+  const { importarVendas, produtos, clientes, loading, recarregarDados } = useVendas()
   const [arquivo, setArquivo] = useState(null)
   const [erros, setErros] = useState([])
   const [sucesso, setSucesso] = useState('')
   const [processando, setProcessando] = useState(false)
+  const [carregandoLocal, setCarregandoLocal] = useState(true)
 
   const regioes = ['Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul']
+  
+  useEffect(() => {
+    const carregarDadosIniciais = async () => {
+      if (produtos.length === 0 || clientes.length === 0) {
+        await recarregarDados()
+      }
+      setCarregandoLocal(false)
+    }
+    carregarDadosIniciais()
+  }, [])
+  
+  if (loading || carregandoLocal) {
+    return (
+      <div className="import-csv-container">
+        <div className="import-header">
+          <Upload size={24} />
+          <h2>Importar Vendas via CSV</h2>
+        </div>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '60px 20px',
+          gap: '20px'
+        }}>
+          <div style={{
+            width: '50px',
+            height: '50px',
+            border: '4px solid #e5e7eb',
+            borderTop: '4px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <p style={{ color: '#6b7280', fontSize: '16px' }}>Carregando dados...</p>
+        </div>
+      </div>
+    )
+  }
 
   const gerarTemplateCSV = () => {
     const headers = [
