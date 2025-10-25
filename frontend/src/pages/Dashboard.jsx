@@ -41,10 +41,12 @@ const Dashboard = () => {
   }, [isAuthenticated, navigate])
 
   useEffect(() => {
+    console.log('📊 Dashboard: vendas atualizadas', vendas.length)
     applyFilters()
   }, [filters, vendas])
 
   const applyFilters = () => {
+    console.log('🔍 Aplicando filtros em', vendas.length, 'vendas')
     let filtered = [...vendas]
 
     // Filtrar por região
@@ -86,6 +88,7 @@ const Dashboard = () => {
       }
     }
 
+    console.log('✅ Filtros aplicados:', filtered.length, 'vendas filtradas')
     setFilteredData(filtered)
   }
 
@@ -106,7 +109,7 @@ const Dashboard = () => {
   }
 
   const renderConteudo = () => {
-    if (loading || (vendas.length === 0 && !loading)) {
+    if (loading) {
       return (
         <div style={{ 
           display: 'flex', 
@@ -125,7 +128,7 @@ const Dashboard = () => {
             animation: 'spin 1s linear infinite'
           }}></div>
           <p style={{ color: '#6b7280', fontSize: '18px', fontWeight: 500 }}>
-            {loading ? 'Carregando dashboard...' : 'Buscando vendas...'}
+            Carregando dashboard...
           </p>
         </div>
       )
@@ -175,22 +178,22 @@ const Dashboard = () => {
               <ChartCard
                 title="Vendas por Mês"
                 type="line"
-                data={getVendasPorMes(vendas)}
+                data={getVendasPorMes(filteredData)}
               />
               <ChartCard
                 title="Vendas por Região"
                 type="bar"
-                data={getVendasPorRegiao(vendas)}
+                data={getVendasPorRegiao(filteredData)}
               />
               <ChartCard
                 title="Vendas por Categoria"
                 type="pie"
-                data={getVendasPorCategoria(vendas)}
+                data={getVendasPorCategoria(filteredData)}
               />
               <ChartCard
                 title="Top 5 Produtos"
                 type="bar-horizontal"
-                data={getTopProdutos(5, vendas)}
+                data={getTopProdutos(5, filteredData)}
               />
             </div>
 

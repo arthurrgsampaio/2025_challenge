@@ -22,6 +22,8 @@ export const VendasProvider = ({ children }) => {
 
   const carregarDados = async () => {
     try {
+      console.log('🔄 Carregando dados...')
+      
       const [vendasRes, produtosRes, clientesRes, categoriasRes] = await Promise.all([
         vendasAPI.listar().catch(err => ({ success: false, error: err })),
         produtosAPI.listar().catch(err => ({ success: false, error: err })),
@@ -29,21 +31,38 @@ export const VendasProvider = ({ children }) => {
         categoriasAPI.listar().catch(err => ({ success: false, error: err }))
       ])
 
+      console.log('✅ Dados recebidos:', {
+        vendas: vendasRes.success ? vendasRes.data?.vendas?.length : 0,
+        produtos: produtosRes.success ? produtosRes.data?.length : 0,
+        clientes: clientesRes.success ? clientesRes.data?.length : 0,
+        categorias: categoriasRes.success ? categoriasRes.data?.length : 0
+      })
+
       if (vendasRes.success) setVendas(vendasRes.data?.vendas || [])
       if (produtosRes.success) setProdutos(produtosRes.data || [])
       if (clientesRes.success) setClientes(clientesRes.data || [])
       if (categoriasRes.success) setCategorias(categoriasRes.data || [])
+      
+      console.log('✅ Estados atualizados!')
     } catch (error) {
-      console.error('Erro ao carregar dados:', error)
+      console.error('❌ Erro ao carregar dados:', error)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
+    // Só carrega dados se estiver autenticado
     if (isAuthenticated) {
       setLoading(true)
       carregarDados()
+    } else {
+      // Limpa dados quando não está autenticado
+      setVendas([])
+      setProdutos([])
+      setClientes([])
+      setCategorias([])
+      setLoading(false)
     }
   }, [isAuthenticated])
 

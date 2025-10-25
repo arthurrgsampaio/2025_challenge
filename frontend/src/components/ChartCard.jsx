@@ -19,8 +19,32 @@ import '../styles/ChartCard.css'
 const COLORS = ['#667eea', '#764ba2', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4']
 
 const ChartCard = ({ title, type, data }) => {
+  console.log(`📊 ChartCard "${title}":`, { type, dataLength: data?.length, data })
+
   const formatCurrency = (value) => {
     return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  }
+
+  // Se não houver dados, mostrar mensagem
+  if (!data || data.length === 0) {
+    return (
+      <div className="chart-card">
+        <div className="chart-card-header">
+          <h3>{title}</h3>
+        </div>
+        <div className="chart-card-content">
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            height: '300px',
+            color: '#9ca3af'
+          }}>
+            Sem dados para exibir
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const formatMonthYear = (mesAno) => {

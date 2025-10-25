@@ -1,17 +1,12 @@
 const API_BASE_URL = 'http://localhost:3000/api/v1';
 
-// Função para fazer requisições com autenticação
-const fetchWithAuth = async (url, options = {}) => {
-  const token = localStorage.getItem('token');
-  
+// Função para fazer requisições à API
+const fetchAPI = async (url, options = {}) => {
+  const silent = options.silent || false; // Não mostrar erros no console
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
 
   const fullUrl = `${API_BASE_URL}${url}`;
 
@@ -19,24 +14,31 @@ const fetchWithAuth = async (url, options = {}) => {
     const response = await fetch(fullUrl, {
       ...options,
       headers,
+      credentials: 'include', // Importante para enviar cookies de sessão
     });
 
     let data;
     try {
       data = await response.json();
     } catch (parseError) {
-      console.error('❌ Erro ao fazer parse da resposta JSON:', parseError);
+      if (!silent) {
+        console.error('❌ Erro ao fazer parse da resposta JSON:', parseError);
+      }
       throw new Error('Resposta inválida do servidor');
     }
 
     if (!response.ok) {
-      console.error('❌ Erro na requisição:', data);
+      if (!silent) {
+        console.error('❌ Erro na requisição:', data);
+      }
       throw new Error(data.message || `Erro ${response.status}: ${response.statusText}`);
     }
 
     return data;
   } catch (error) {
-    console.error('❌ Erro na requisição fetch:', error);
+    if (!silent) {
+      console.error('❌ Erro na requisição fetch:', error);
+    }
     throw error;
   }
 };
@@ -44,21 +46,27 @@ const fetchWithAuth = async (url, options = {}) => {
 // API de Autenticação
 export const authAPI = {
   register: async (userData) => {
-    return fetchWithAuth('/auth/register', {
+    return fetchAPI('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   },
 
-  login: async (email, password) => {
-    return fetchWithAuth('/auth/login', {
+  login: async (email, senha) => {
+    return fetchAPI('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, senha }),
+    });
+  },
+
+  logout: async () => {
+    return fetchAPI('/auth/logout', {
+      method: 'POST',
     });
   },
 
   me: async () => {
-    return fetchWithAuth('/auth/me');
+    return fetchAPI('/auth/me', { silent: true }); // Não mostrar erros no console
   },
 };
 
@@ -76,18 +84,18 @@ export const vendasAPI = {
     const queryString = params.toString();
     const url = `/vendas${queryString ? `?${queryString}` : ''}`;
     
-    return fetchWithAuth(url);
+    return fetchAPI(url);
   },
 
   criar: async (vendaData) => {
-    return fetchWithAuth('/vendas', {
+    return fetchAPI('/vendas', {
       method: 'POST',
       body: JSON.stringify(vendaData),
     });
   },
 
   importar: async (vendas) => {
-    return fetchWithAuth('/vendas/importar', {
+    return fetchAPI('/vendas/importar', {
       method: 'POST',
       body: JSON.stringify({ vendas }),
     });
@@ -97,11 +105,11 @@ export const vendasAPI = {
 // API de Clientes
 export const clientesAPI = {
   listar: async () => {
-    return fetchWithAuth('/clientes');
+    return fetchAPI('/clientes');
   },
   
   criar: async (clienteData) => {
-    return fetchWithAuth('/clientes', {
+    return fetchAPI('/clientes', {
       method: 'POST',
       body: JSON.stringify(clienteData),
     });
@@ -111,11 +119,11 @@ export const clientesAPI = {
 // API de Produtos
 export const produtosAPI = {
   listar: async () => {
-    return fetchWithAuth('/produtos');
+    return fetchAPI('/produtos');
   },
   
   criar: async (produtoData) => {
-    return fetchWithAuth('/produtos', {
+    return fetchAPI('/produtos', {
       method: 'POST',
       body: JSON.stringify(produtoData),
     });
@@ -125,7 +133,7 @@ export const produtosAPI = {
 // API de Categorias
 export const categoriasAPI = {
   listar: async () => {
-    return fetchWithAuth('/categorias');
+    return fetchAPI('/categorias');
   },
 };
 
@@ -140,7 +148,7 @@ export const analyticsAPI = {
     const queryString = params.toString();
     const url = `/analytics/overview${queryString ? `?${queryString}` : ''}`;
     
-    return fetchWithAuth(url);
+    return fetchAPI(url);
   },
 };
 

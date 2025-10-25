@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const session = require('express-session');
 const { errorHandler, notFoundHandler } = require('./middlewares/errorHandler');
 
 // Importar rotas
@@ -23,12 +24,12 @@ const app = express();
 // Helmet - Segurança
 app.use(helmet());
 
-// CORS - Permitir frontend local em múltiplas portas
+// CORS - Permitir frontend local em múltiplas portas com cookies
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+  credentials: true, // Importante para sessões
 }));
 
 console.log('✅ CORS configurado para aceitar requisições de:');
@@ -40,6 +41,19 @@ console.log('   - http://127.0.0.1:3000');
 // Parse JSON
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Configurar sessões
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'starsales-secret-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  }
+}));
 
 // Logging
 app.use(morgan('combined'));

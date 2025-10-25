@@ -1,27 +1,18 @@
 const { execute, executeAndCommit } = require('../config/database');
-const crypto = require('crypto');
-const uuidv4 = crypto.randomUUID ? crypto.randomUUID.bind(crypto) : require('uuid').v4;
 
 class Usuario {
   /**
    * Criar novo usuário
    */
-  static async create({ nome, email, password }) {
-    const id = uuidv4();
-    
+  static async create({ nome, email, senha }) {
     const sql = `
-      INSERT INTO usuarios (id, nome, email, password)
-      VALUES (:id, :nome, :email, :password)
+      INSERT INTO usuarios (id, nome, email, password, created_at, updated_at)
+      VALUES (SYS_GUID(), :nome, :email, :senha, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `;
     
-    await executeAndCommit(sql, {
-      id,
-      nome,
-      email: email.toLowerCase(),
-      password, // Já deve vir hasheado do controller
-    });
+    await executeAndCommit(sql, { nome, email, senha });
     
-    return { id, nome, email: email.toLowerCase() };
+    return { nome, email };
   }
   
   /**
@@ -29,9 +20,13 @@ class Usuario {
    */
   static async findByEmail(email) {
     const sql = `
-      SELECT id, nome, email, password, created_at, updated_at
+      SELECT 
+        id as "id",
+        nome as "nome",
+        email as "email",
+        password as "senha"
       FROM usuarios
-      WHERE LOWER(email) = LOWER(:email)
+      WHERE email = :email
     `;
     
     const result = await execute(sql, { email });
@@ -44,7 +39,10 @@ class Usuario {
    */
   static async findById(id) {
     const sql = `
-      SELECT id, nome, email, created_at, updated_at
+      SELECT 
+        id as "id",
+        nome as "nome",
+        email as "email"
       FROM usuarios
       WHERE id = :id
     `;
@@ -61,42 +59,12 @@ class Usuario {
     const sql = `
       SELECT COUNT(*) as count
       FROM usuarios
-      WHERE LOWER(email) = LOWER(:email)
+      WHERE email = :email
     `;
     
     const result = await execute(sql, { email });
     
     return result.rows[0].COUNT > 0;
-  }
-  
-  /**
-   * Atualizar usuário
-   */
-  static async update(id, { nome, email }) {
-    const sql = `
-      UPDATE usuarios
-      SET nome = :nome,
-          email = :email,
-          updated_at = CURRENT_TIMESTAMP
-      WHERE id = :id
-    `;
-    
-    await executeAndCommit(sql, {
-      id,
-      nome,
-      email: email.toLowerCase(),
-    });
-    
-    return this.findById(id);
-  }
-  
-  /**
-   * Deletar usuário
-   */
-  static async delete(id) {
-    const sql = `DELETE FROM usuarios WHERE id = :id`;
-    
-    await executeAndCommit(sql, { id });
   }
 }
 

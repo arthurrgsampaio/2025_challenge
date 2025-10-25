@@ -1,73 +1,41 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { UserPlus } from 'lucide-react'
+import { BarChart3 } from 'lucide-react'
 import '../styles/Auth.css'
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    nome: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  })
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
+  
+  const { register } = useAuth()
   const navigate = useNavigate()
-  const { register, isAuthenticated } = useAuth()
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard')
-    }
-  }, [isAuthenticated, navigate])
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
+    setLoading(true)
 
-    // Validações
-    if (!formData.nome || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError('Por favor, preencha todos os campos')
-      return
-    }
-
-    if (formData.password.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres')
-      return
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('As senhas não coincidem')
-      return
-    }
-
-    try {
-      const result = await register({
-        nome: formData.nome,
-        email: formData.email,
-        password: formData.password
-      })
-
-      if (result.success) {
-        setSuccess(true)
-        setTimeout(() => {
-          navigate('/login')
-        }, 2000)
-      } else {
-        console.error('❌ Erro no cadastro:', result.message)
-        setError(result.message || 'Erro ao realizar cadastro')
-      }
-    } catch (error) {
-      console.error('❌ Erro crítico no cadastro:', error)
-      setError('Erro ao conectar com o servidor. Tente novamente.')
+    console.log('📝 Enviando cadastro:', { nome, email, senha: '***' })
+    
+    const result = await register({ nome, email, senha })
+    
+    console.log('📝 Resultado do cadastro:', result)
+    
+    if (result.success) {
+      setSuccess('Cadastro realizado com sucesso! Redirecionando...')
+      setLoading(false)
+      setTimeout(() => {
+        navigate('/login')
+      }, 2000)
+    } else {
+      setError(result.message || 'Erro ao realizar cadastro')
+      setLoading(false)
     }
   }
 
@@ -75,88 +43,68 @@ const Register = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-icon">
-            <UserPlus size={32} />
-          </div>
-          <h1>Criar Conta</h1>
-          <p>Cadastre-se para acessar o dashboard de vendas</p>
+          <BarChart3 size={48} />
+          <h1>StarSales</h1>
+          <p>Crie sua conta para começar</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
-          {error && (
-            <div className="auth-error">
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="auth-success">
-              Cadastro realizado com sucesso! Redirecionando...
-            </div>
-          )}
-
+          {error && <div className="auth-error">{error}</div>}
+          {success && <div className="auth-success">{success}</div>}
+          
           <div className="form-group">
-            <label htmlFor="nome">Nome Completo</label>
+            <label htmlFor="nome">Nome</label>
             <input
-              type="text"
               id="nome"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              required
               placeholder="Seu nome completo"
-              autoComplete="name"
+              disabled={loading}
+              minLength={3}
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
-              type="email"
               id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               placeholder="seu@email.com"
-              autoComplete="email"
+              disabled={loading}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Senha</label>
+            <label htmlFor="senha">Senha</label>
             <input
+              id="senha"
               type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Mínimo 6 caracteres"
-              autoComplete="new-password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+              placeholder="••••••••"
+              disabled={loading}
+              minLength={6}
             />
+            <small>Mínimo de 6 caracteres</small>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirmar Senha</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Digite a senha novamente"
-              autoComplete="new-password"
-            />
-          </div>
-
-          <button type="submit" className="btn-primary">
-            Cadastrar
+          <button 
+            type="submit" 
+            className="auth-submit"
+            disabled={loading}
+          >
+            {loading ? 'Criando conta...' : 'Criar conta'}
           </button>
         </form>
 
         <div className="auth-footer">
-          <p>
-            Já tem uma conta?{' '}
-            <Link to="/login">Faça login</Link>
-          </p>
+          <p>Já tem uma conta? <Link to="/login">Fazer login</Link></p>
         </div>
       </div>
     </div>

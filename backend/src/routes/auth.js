@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/authController');
-const authMiddleware = require('../middlewares/auth');
 const { validate, Joi } = require('../middlewares/validation');
 
 // Schema de validação para registro
@@ -14,7 +13,7 @@ const registerSchema = Joi.object({
     'string.empty': 'Email é obrigatório',
     'string.email': 'Email inválido',
   }),
-  password: Joi.string().min(6).required().messages({
+  senha: Joi.string().min(6).required().messages({
     'string.empty': 'Senha é obrigatória',
     'string.min': 'Senha deve ter no mínimo 6 caracteres',
   }),
@@ -26,7 +25,7 @@ const loginSchema = Joi.object({
     'string.empty': 'Email é obrigatório',
     'string.email': 'Email inválido',
   }),
-  password: Joi.string().required().messages({
+  senha: Joi.string().required().messages({
     'string.empty': 'Senha é obrigatória',
   }),
 });
@@ -34,7 +33,8 @@ const loginSchema = Joi.object({
 // Rotas
 router.post('/register', validate(registerSchema), AuthController.register);
 router.post('/login', validate(loginSchema), AuthController.login);
-router.get('/me', authMiddleware, AuthController.me);
+router.post('/logout', AuthController.logout);
+router.get('/me', AuthController.me);
 
 module.exports = router;
 

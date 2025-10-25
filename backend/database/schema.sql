@@ -353,6 +353,211 @@ INSERT INTO clientes (nome, sexo, idade) VALUES ('Julia Lima', 'F', 26);
 INSERT INTO clientes (nome, sexo, idade) VALUES ('Roberto Alves', 'M', 38);
 INSERT INTO clientes (nome, sexo, idade) VALUES ('Patricia Rocha', 'F', 33);
 
+-- Usuário ADMIN
+-- Senha: admin123 (já hasheada com bcrypt)
+INSERT INTO usuarios (id, nome, email, password, created_at, updated_at) 
+VALUES ('ADMIN-USER-ID-001', 'Administrador', 'admin@admin.com', '$2b$10$DSxfBLkxbOjPp0Q5axFSFOlrbODEyhqubU1A9WWDIFlx4M2r3JeLS', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+COMMIT;
+
+-- =====================================================
+-- Vendas de Exemplo para usuário ADMIN
+-- Dados diversificados ao longo de 12 meses
+-- =====================================================
+
+-- Janeiro 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 1, 'João Silva', 'M', 35, 'Sudeste', TO_TIMESTAMP('2025-01-05 10:30:00', 'YYYY-MM-DD HH24:MI:SS'), 3150.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (1, 1, 'Smartphone', 2, 1500.00, 1, 3000.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (1, 3, 'Café Premium', 3, 45.00, 2, 135.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (1, 10, 'Romance', 1, 65.00, 5, 65.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 2, 'Maria Santos', 'F', 28, 'Sul', TO_TIMESTAMP('2025-01-12 14:20:00', 'YYYY-MM-DD HH24:MI:SS'), 270.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (2, 5, 'Camisa Social', 2, 120.00, 3, 240.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (2, 4, 'Chá Especial', 1, 35.00, 2, 35.00);
+
+-- Fevereiro 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 3, 'Pedro Oliveira', 'M', 42, 'Nordeste', TO_TIMESTAMP('2025-02-08 09:15:00', 'YYYY-MM-DD HH24:MI:SS'), 4200.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (3, 2, 'Notebook', 1, 2500.00, 1, 2500.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (3, 7, 'Cadeira Escritório', 2, 800.00, 4, 1600.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (3, 9, 'Livro Técnico', 2, 65.00, 5, 130.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 4, 'Ana Costa', 'F', 31, 'Centro-Oeste', TO_TIMESTAMP('2025-02-14 16:45:00', 'YYYY-MM-DD HH24:MI:SS'), 1950.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (4, 8, 'Mesa Escritório', 1, 1200.00, 4, 1200.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (4, 6, 'Calça Jeans', 5, 150.00, 3, 750.00);
+
+-- Março 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 5, 'Carlos Souza', 'M', 45, 'Sudeste', TO_TIMESTAMP('2025-03-03 11:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1800.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (5, 1, 'Smartphone', 1, 1500.00, 1, 1500.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (5, 5, 'Camisa Social', 2, 120.00, 3, 240.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (5, 3, 'Café Premium', 1, 45.00, 2, 45.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 6, 'Julia Lima', 'F', 26, 'Sul', TO_TIMESTAMP('2025-03-20 13:30:00', 'YYYY-MM-DD HH24:MI:SS'), 395.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (6, 6, 'Calça Jeans', 2, 150.00, 3, 300.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (6, 10, 'Romance', 2, 45.00, 5, 90.00);
+
+-- Abril 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 7, 'Roberto Alves', 'M', 38, 'Norte', TO_TIMESTAMP('2025-04-10 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 5500.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (7, 2, 'Notebook', 2, 2500.00, 1, 5000.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (7, 1, 'Smartphone', 1, 1500.00, 1, 1500.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 8, 'Patricia Rocha', 'F', 33, 'Sudeste', TO_TIMESTAMP('2025-04-22 15:15:00', 'YYYY-MM-DD HH24:MI:SS'), 2135.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (8, 7, 'Cadeira Escritório', 2, 800.00, 4, 1600.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (8, 5, 'Camisa Social', 3, 120.00, 3, 360.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (8, 3, 'Café Premium', 4, 45.00, 2, 180.00);
+
+-- Maio 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 1, 'João Silva', 'M', 35, 'Sudeste', TO_TIMESTAMP('2025-05-05 09:45:00', 'YYYY-MM-DD HH24:MI:SS'), 1680.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (9, 8, 'Mesa Escritório', 1, 1200.00, 4, 1200.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (9, 6, 'Calça Jeans', 3, 150.00, 3, 450.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (9, 4, 'Chá Especial', 1, 35.00, 2, 35.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 2, 'Maria Santos', 'F', 28, 'Sul', TO_TIMESTAMP('2025-05-18 14:00:00', 'YYYY-MM-DD HH24:MI:SS'), 3240.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (10, 1, 'Smartphone', 2, 1500.00, 1, 3000.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (10, 5, 'Camisa Social', 2, 120.00, 3, 240.00);
+
+-- Junho 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 3, 'Pedro Oliveira', 'M', 42, 'Nordeste', TO_TIMESTAMP('2025-06-07 11:30:00', 'YYYY-MM-DD HH24:MI:SS'), 950.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (11, 7, 'Cadeira Escritório', 1, 800.00, 4, 800.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (11, 6, 'Calça Jeans', 1, 150.00, 3, 150.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 4, 'Ana Costa', 'F', 31, 'Centro-Oeste', TO_TIMESTAMP('2025-06-25 16:20:00', 'YYYY-MM-DD HH24:MI:SS'), 2800.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (12, 2, 'Notebook', 1, 2500.00, 1, 2500.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (12, 9, 'Livro Técnico', 3, 65.00, 5, 195.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (12, 3, 'Café Premium', 2, 45.00, 2, 90.00);
+
+-- Julho 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 5, 'Carlos Souza', 'M', 45, 'Sudeste', TO_TIMESTAMP('2025-07-02 10:10:00', 'YYYY-MM-DD HH24:MI:SS'), 4200.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (13, 2, 'Notebook', 1, 2500.00, 1, 2500.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (13, 8, 'Mesa Escritório', 1, 1200.00, 4, 1200.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (13, 5, 'Camisa Social', 4, 120.00, 3, 480.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 6, 'Julia Lima', 'F', 26, 'Sul', TO_TIMESTAMP('2025-07-19 13:50:00', 'YYYY-MM-DD HH24:MI:SS'), 510.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (14, 5, 'Camisa Social', 3, 120.00, 3, 360.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (14, 6, 'Calça Jeans', 1, 150.00, 3, 150.00);
+
+-- Agosto 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 7, 'Roberto Alves', 'M', 38, 'Norte', TO_TIMESTAMP('2025-08-08 12:00:00', 'YYYY-MM-DD HH24:MI:SS'), 3295.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (15, 1, 'Smartphone', 2, 1500.00, 1, 3000.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (15, 9, 'Livro Técnico', 3, 65.00, 5, 195.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (15, 3, 'Café Premium', 2, 45.00, 2, 90.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 8, 'Patricia Rocha', 'F', 33, 'Sudeste', TO_TIMESTAMP('2025-08-21 15:30:00', 'YYYY-MM-DD HH24:MI:SS'), 1950.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (16, 7, 'Cadeira Escritório', 2, 800.00, 4, 1600.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (16, 10, 'Romance', 8, 45.00, 5, 360.00);
+
+-- Setembro 2025 - Vendas
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 1, 'João Silva', 'M', 35, 'Sudeste', TO_TIMESTAMP('2025-09-05 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), 5700.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (17, 2, 'Notebook', 2, 2500.00, 1, 5000.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (17, 5, 'Camisa Social', 5, 120.00, 3, 600.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (17, 3, 'Café Premium', 2, 45.00, 2, 90.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 2, 'Maria Santos', 'F', 28, 'Sul', TO_TIMESTAMP('2025-09-18 14:25:00', 'YYYY-MM-DD HH24:MI:SS'), 2450.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (18, 8, 'Mesa Escritório', 2, 1200.00, 4, 2400.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (18, 4, 'Chá Especial', 1, 35.00, 2, 35.00);
+
+-- Outubro 2025 - Vendas (mais vendas neste mês)
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 3, 'Pedro Oliveira', 'M', 42, 'Nordeste', TO_TIMESTAMP('2025-10-03 10:20:00', 'YYYY-MM-DD HH24:MI:SS'), 3750.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (19, 1, 'Smartphone', 2, 1500.00, 1, 3000.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (19, 6, 'Calça Jeans', 5, 150.00, 3, 750.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 4, 'Ana Costa', 'F', 31, 'Centro-Oeste', TO_TIMESTAMP('2025-10-10 11:45:00', 'YYYY-MM-DD HH24:MI:SS'), 4100.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (20, 2, 'Notebook', 1, 2500.00, 1, 2500.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (20, 7, 'Cadeira Escritório', 2, 800.00, 4, 1600.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 5, 'Carlos Souza', 'M', 45, 'Sudeste', TO_TIMESTAMP('2025-10-15 16:10:00', 'YYYY-MM-DD HH24:MI:SS'), 1860.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (21, 1, 'Smartphone', 1, 1500.00, 1, 1500.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (21, 5, 'Camisa Social', 3, 120.00, 3, 360.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 6, 'Julia Lima', 'F', 26, 'Sul', TO_TIMESTAMP('2025-10-20 13:00:00', 'YYYY-MM-DD HH24:MI:SS'), 2900.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (22, 2, 'Notebook', 1, 2500.00, 1, 2500.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (22, 6, 'Calça Jeans', 2, 150.00, 3, 300.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (22, 3, 'Café Premium', 2, 45.00, 2, 90.00);
+
+INSERT INTO vendas (id_usuario, id_cliente, nome_cliente, sexo_cliente, idade_cliente, regiao_venda, data_venda, total)
+VALUES ('ADMIN-USER-ID-001', 7, 'Roberto Alves', 'M', 38, 'Norte', TO_TIMESTAMP('2025-10-23 09:30:00', 'YYYY-MM-DD HH24:MI:SS'), 1850.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (23, 7, 'Cadeira Escritório', 2, 800.00, 4, 1600.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (23, 9, 'Livro Técnico', 3, 65.00, 5, 195.00);
+INSERT INTO venda_produtos (id_venda, id_produto, nome_produto, quantidade, preco_unitario, id_categoria, subtotal)
+VALUES (23, 4, 'Chá Especial', 2, 35.00, 2, 70.00);
+
 COMMIT;
 
 -- =====================================================
